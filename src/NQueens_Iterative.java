@@ -1,19 +1,19 @@
 import java.util.Arrays;
 
 public class NQueens_Iterative {
-	final int N = 4;
+	final int N = 8;
 	int counter = 0;
 	int [] position = new int[N];
 	public static void main(String[] args) {
 
         NQueens_Iterative Solution = new NQueens_Iterative();
         for (int i = 0; i < 1; i++)
-            Solution.solveNQ();
+            Solution.solveNQ(10);
 
 	}
 	
 	
-    boolean solveNQ() {
+    boolean solveNQ(int numSol) {
         // Create board and initialize all values to 0
         int [][] board = new int [N][N];
         for (int i = 0; i < N; i++) {
@@ -22,34 +22,52 @@ public class NQueens_Iterative {
             }
         }
         
-        for (int j = 0; j < N; j++) {
-        	for (int i = position[j]; i < N; i++) {
-        		if (isSafe(board, i, j)) {
-            		board[i][j] = 1;
-            		position[j] = i;
-            		if (j!=N-1)
-            			position[j+1] = 0;
-        		}
-        	}
-            printSolution(board);
-            
-            if (colIsEmpty(board, j)) {
-            	board[position[j-1]][j-1] = 0;
-            	position[j-1]++;
-            	if (position[j-1]==N){
-            		
-            	}
-            	j-=2;
+        boolean forceChange = false;;
+        int changeIndex=-1;
 
-            	System.out.println(Arrays.toString(position));
-            }
+        while(counter<numSol) {
+	        for (int j = 0; j < N; j++) {
+	        	if (forceChange==true) {
+	        		j = changeIndex;
+	        		forceChange = false;
+	        	}
+	        	for (int i = position[j]; i < N; i++) {
+	        		if (isSafe(board, i, j)) {
+	            		board[i][j] = 1;
+	            		position[j] = i;
+	            		if (j!=N-1)
+	            			position[j+1] = 0;
+	        		}
+	        	}
+	        	//System.out.println(Arrays.toString(position));
+	            //printSolution(board);
+	            
+	            if (colIsEmpty(board, j)) {
+	            	board[position[j-1]][j-1] = 0;
+	            	position[j-1]++;
+	            	j-=2;
+	            }
+	        }
+	        
+	        counter++;
+	        for (int j = N-1; j > 0; j--) {
+	        		if (position[j]<N-1) {
+	        			board[position[j]][j] = 0;
+	        			position[j]++;
+	        			forceChange = true;
+	        			changeIndex=j;
+	        			j=0;
+
+	    	        	System.out.println(Arrays.toString(position));
+	        		}
+	        }
+	        printSolution(board);
         }
-        
     	return true;
     }
 	
     boolean isSafe(int [][] board, int row, int col) {
-    	// Check this row
+    	// Check the row
     	for (int j = 0; j < col; j++)
     		if (board[row][j] == 1)
     			return false;
